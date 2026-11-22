@@ -15,3 +15,16 @@ def generate_heatmap(events: list[EventInput]):
         return calculate_weekly_heatmap(raw_events)
     except ValueError as err:
         raise HTTPException(status_code=400, detail=f"Invalid date format: {err}")
+
+"""
+from models import Deadline, WeekScore
+
+@app.post("/api/heatmap/calculate", response_model=list[WeekScore])
+def generate_heatmap(events: list[dict]):
+    try:
+        return calculate_weekly_heatmap(events)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=f"Invalid date format: {err}")
+
+Would need to syncronize the shape of the input dictionary with the calculate function.
+"""
