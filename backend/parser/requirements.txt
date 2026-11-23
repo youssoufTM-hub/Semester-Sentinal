@@ -1,0 +1,13 @@
+# Core
+pydantic>=2.6
+fastapi>=0.110
+python-multipart>=0.0.9
+pypdf>=5.0          # PDF text fallback for providers that can't read PDFs
+python-docx>=1.1    # Word (.docx) syllabi
+python-dotenv>=1.0  # optional: load backend/.env
+
+# providers (gemini is the default)
+google-genai>=1.50
+openai>=1.60
+
+pytest>=8

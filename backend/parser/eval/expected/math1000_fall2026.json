@@ -1,0 +1,10 @@
+{
+  "file_contains": "MATH1000U",
+  "course_code": "MATH1000U",
+  "notes": "Midterms are only given as 'Week 5' and 'Week 10' (class days Tue/Fri). With classes starting Tue Sep 8 and the Oct 12-16 study break skipped, week 5 is Oct 5-9 and week 10 is Nov 16-20. Any date in that week counts, as does null with a review flag. The class time is printed as '3:40 PM - 5:00 AM' (typo).",
+  "items": [
+    {"title": "Midterm I", "kind": ["exam"], "due_range": ["2026-10-05", "2026-10-09"], "match": "mid.?term"},
+    {"title": "Midterm II", "kind": ["exam"], "due_range": ["2026-11-16", "2026-11-20"], "match": "mid.?term"},
+    {"title": "Final Exam", "kind": ["exam"], "due_date": null, "match": "final"}
+  ]
+}

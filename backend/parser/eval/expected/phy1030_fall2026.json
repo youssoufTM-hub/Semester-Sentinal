@@ -1,0 +1,12 @@
+{
+  "file_contains": "Syllabus26-2",
+  "course_code": "PHY 1030U",
+  "notes": "Four in-lecture tests (20% total) and a December final, none with dates. Expected: undated rows flagged for review, nothing invented.",
+  "items": [
+    {"title": "Test 1", "kind": ["exam", "quiz"], "due_date": null, "match": "test"},
+    {"title": "Test 2", "kind": ["exam", "quiz"], "due_date": null, "match": "test"},
+    {"title": "Test 3", "kind": ["exam", "quiz"], "due_date": null, "match": "test"},
+    {"title": "Test 4", "kind": ["exam", "quiz"], "due_date": null, "match": "test"},
+    {"title": "Final Exam", "kind": ["exam"], "due_date": null, "match": "final"}
+  ]
+}
