@@ -24,3 +24,25 @@ def colour_for(score: float) -> str:
     if score < 12:
         return "orange"
     return "red"
+
+
+def score_weeks(deadlines: list[Deadline]) -> list[WeekScore]:
+    grouped: dict[date, list[Deadline]] = {}
+    for deadline in deadlines:
+        monday = deadline.due - timedelta(days=deadline.due.weekday())
+        grouped.setdefault(monday, []).append(deadline)
+
+    weeks: list[WeekScore] = []
+    for monday in sorted(grouped):
+        items = grouped[monday]
+        score = sum(item_points(item) for item in items)
+        weeks.append(
+            WeekScore(
+                week_start=monday,
+                score=score,
+                level=colour_for(score),
+                is_final_boss=score >= 12,
+                items=items,
+            )
+        )
+    return weeks
