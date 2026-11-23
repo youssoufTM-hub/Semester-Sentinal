@@ -1,0 +1,18 @@
+[
+  { "course": "MATH1000", "title": "Assignment 1", "kind": "assignment", "due": "2026-09-25", "weight": 5 },
+  { "course": "PHY1030", "title": "Quiz 1", "kind": "quiz", "due": "2026-09-29", "weight": 5 },
+  { "course": "CSCI1062", "title": "Lab report 1", "kind": "assignment", "due": "2026-10-02", "weight": 5 },
+  { "course": "BUSI1700", "title": "Case study 1", "kind": "assignment", "due": "2026-10-06", "weight": 10 },
+  { "course": "MATH1000", "title": "Quiz 2", "kind": "quiz", "due": "2026-10-07", "weight": 5 },
+  { "course": "PHY1030", "title": "Lab 2", "kind": "assignment", "due": "2026-10-09", "weight": 5 },
+  { "course": "MATH1000", "title": "Midterm", "kind": "exam", "due": "2026-10-14", "weight": 25 },
+  { "course": "PHY1030", "title": "Midterm", "kind": "exam", "due": "2026-10-15", "weight": 30 },
+  { "course": "CSCI1062", "title": "Project milestone 1", "kind": "project", "due": "2026-10-16", "weight": 20 },
+  { "course": "BUSI1700", "title": "Quiz 2", "kind": "quiz", "due": "2026-10-16", "weight": 5 },
+  { "course": "CSCI1062", "title": "Midterm", "kind": "exam", "due": "2026-10-28", "weight": 20 },
+  { "course": "BUSI1700", "title": "Group project", "kind": "project", "due": "2026-10-30", "weight": 15 },
+  { "course": "MATH1000", "title": "Assignment 3", "kind": "assignment", "due": "2026-11-13", "weight": 5 },
+  { "course": "PHY1030", "title": "Quiz 3", "kind": "quiz", "due": "2026-11-18", "weight": 5 },
+  { "course": "CSCI1062", "title": "Final project", "kind": "project", "due": "2026-12-04", "weight": 30 },
+  { "course": "BUSI1700", "title": "Final exam", "kind": "exam", "due": "2026-12-09", "weight": 35 }
+]
