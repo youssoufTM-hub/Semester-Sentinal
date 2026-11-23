@@ -11,31 +11,98 @@ Output plugs straight into the rest of the backend:
 
 ## Setup
 
+Everyone uses their own API key, kept on their own computer. Keys never go on GitHub.
+
+### 1. Install the packages
+
 ```powershell
 cd backend
 pip install -r parser/requirements.txt
+```
+
+### 2. Get a Gemini API key (free)
+
+1. Go to https://aistudio.google.com/apikey and sign in with a Google account.
+2. Click **Create API key**.
+3. Copy the key (it starts with `AIza`).
+
+Get your own instead of sharing one. The free tier has rate limits, and a shared key
+runs out fast.
+
+### 3. Add the key
+
+**Option A: config file (recommended)**
+
+From the `backend` folder, make your own copy of the example file:
+
+```powershell
 copy parser\parser_config.example.json parser\parser_config.json
 ```
 
-Put your API key in `parser_config.json`. The file is in `.gitignore`, so don't
-worry about committing it by accident.
+Open `parser\parser_config.json` and paste your key between the quotes after `"api_key"`
+under `gemini`:
 
 ```json
 {
   "provider": "gemini",
   "providers": {
-    "gemini": { "api_key": "YOUR-KEY", "model": "gemini-3.5-flash", "fallback_models": ["gemini-3.5-flash-lite"] },
+    "gemini": { "api_key": "PASTE-YOUR-KEY-HERE", "model": "gemini-3.5-flash", "fallback_models": ["gemini-3.5-flash-lite"] },
     "openai": { "api_key": "", "model": "gpt-5-mini", "base_url": "" }
   }
 }
 ```
 
-`openai` works with anything that has an OpenAI-style API. Set `base_url` for
-OpenRouter (`https://openrouter.ai/api/v1`) or Ollama (`http://localhost:11434/v1`,
-no key needed).
+Important:
+- Put the key in `parser_config.json`, **not** in `parser_config.example.json`. The
+  parser never reads the example file, and that file is committed, so a key in it
+  would end up on GitHub.
+- `parser_config.json` is in `.gitignore`, so it stays on your machine. Check with
+  `git status`: it should not show up.
 
-Environment variables override the file: `PARSER_PROVIDER`, `PARSER_MODEL`,
-`GEMINI_API_KEY`, `OPENAI_API_KEY`, `OPENAI_BASE_URL`.
+**Option B: environment variable**
+
+For the current terminal only:
+
+```powershell
+$env:GEMINI_API_KEY = "PASTE-YOUR-KEY-HERE"
+```
+
+Saved permanently (open a new terminal afterwards):
+
+```powershell
+setx GEMINI_API_KEY "PASTE-YOUR-KEY-HERE"
+```
+
+Environment variables override the config file. The full list: `PARSER_PROVIDER`,
+`PARSER_MODEL`, `GEMINI_API_KEY`, `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and
+`PARSER_CONFIG` (path to a config file somewhere else).
+
+### 4. Check that it works
+
+```powershell
+pytest parser/tests -s
+```
+
+If the key is missing you'll see `NoAPIKeyError: No API key configured for "gemini"`.
+That means the key isn't in `parser\parser_config.json` and isn't set as an
+environment variable.
+
+### Using a different provider
+
+Set `"provider"` to `"openai"` and fill in the `openai` block. It works with anything
+that has an OpenAI-style API:
+
+| Service | `base_url` | key |
+|---|---|---|
+| OpenAI | leave blank | OpenAI key |
+| OpenRouter (many models, one key) | `https://openrouter.ai/api/v1` | OpenRouter key |
+| Ollama (runs locally, free) | `http://localhost:11434/v1` | none needed |
+
+### Deploying
+
+On the server (Render, Railway, etc.), don't upload a config file. Set `GEMINI_API_KEY`
+in the host's environment variable settings. For GitHub Actions, add it under the repo's
+**Settings → Secrets and variables → Actions** as `GEMINI_API_KEY`.
 
 ## Running it
 
