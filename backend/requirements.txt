@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pdfplumber
+dateparser
+icalendar
+pytest
