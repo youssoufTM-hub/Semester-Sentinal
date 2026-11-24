@@ -1,0 +1,35 @@
+{
+  "course": {
+    "code": "CSCI 2010U",
+    "name": "Principles of Computer Science",
+    "term": "Winter 2027",
+    "instructor": "Dr. Example",
+    "term_start": "2027-01-11",
+    "term_end": "2027-04-24"
+  },
+  "deadlines": [
+    {"title": "Lab 1", "kind": "assignment", "raw_label": "Lab", "due_date": "2027-01-22", "due_time": "23:59", "end_time": null,
+     "weight_pct": 2.0, "estimated_hours": 3, "date_source": "Labs due Fridays, weeks 2-11", "confidence": "medium",
+     "needs_review": false, "note": "Labs 20% split over 10 labs"},
+    {"title": "Midterm Exam", "kind": "exam", "raw_label": "Midterm Test", "due_date": "2027-02-24", "due_time": "10:10", "end_time": "11:30",
+     "weight_pct": 25.0, "estimated_hours": 12, "date_source": "Week 7 (Wed) - Midterm in class", "confidence": "medium",
+     "needs_review": false, "note": "Week 7 counted after reading week"},
+    {"title": "Term Project", "kind": "project", "raw_label": "Group Project", "due_date": "2027-04-02", "due_time": null, "end_time": null,
+     "weight_pct": 20.0, "estimated_hours": 25, "date_source": "Project due April 2", "confidence": "high",
+     "needs_review": false, "note": null},
+    {"title": "Final Exam", "kind": "exam", "raw_label": "Final Examination", "due_date": null, "due_time": null, "end_time": null,
+     "weight_pct": 35.0, "estimated_hours": 20, "date_source": "Scheduled by the Registrar during the final exam period",
+     "confidence": "low", "needs_review": true, "note": "Date set by the registrar"}
+  ],
+  "meetings": [
+    {"kind": "lecture", "day": "monday", "start_time": "10:10", "end_time": "11:30", "location": "UA 1350", "section": null},
+    {"kind": "lecture", "day": "wednesday", "start_time": "10:10", "end_time": "11:30", "location": "UA 1350", "section": null}
+  ],
+  "grading_scheme": [
+    {"name": "Labs", "weight_pct": 20},
+    {"name": "Midterm", "weight_pct": 25},
+    {"name": "Project", "weight_pct": 20},
+    {"name": "Final", "weight_pct": 35}
+  ],
+  "warnings": ["Final exam date is set by the Registrar."]
+}
