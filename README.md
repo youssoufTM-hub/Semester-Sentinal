@@ -114,7 +114,7 @@ Measured on REPLACE_N real syllabi from 4 courses and 3 formats.
 | REPLACE_NAME | Frontend |
 | Youssouf Tive Madi | Analytics, tests and documentation |
 
-Built for the REPLACE_CLUB_NAME project challenge, fall 2026.
+Built for the OTU Project Sprint, fall 2026.
 
 ## License
 
