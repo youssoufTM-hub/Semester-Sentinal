@@ -1,5 +1,8 @@
+from analytics.collisions import find_collisions, collisions_per_week
+from analytics.models import deadline_from_event
 from datetime import datetime, date, timedelta
 from collections import defaultdict
+
 
 WEIGHTS = {
     "exam": 4.0,
@@ -10,7 +13,6 @@ WEIGHTS = {
     "study": 1.0,
 }
 
-HEAVY_TYPES = {"exam", "project"}
 
 # Returns the Monday of the given datetime as YYYY-MM-DD.
 def get_week_start(dt: datetime) -> str:
@@ -39,33 +41,13 @@ def get_score_level(score: float) -> str:
         return "red"
 
 
-def count_collisions(week_events: list[dict]) -> int:
-    heavy_dates = []
-    for event in week_events:
-        event_type = event.get("type", "assignment").lower()
-        weight_pct = event.get("weight_pct", 0.0) or 0.0
-        if event_type in HEAVY_TYPES or weight_pct >= 20.0:
-            heavy_dates.append(datetime.fromisoformat(event["start"]).date())
 
-    heavy_dates.sort()
-    n = len(heavy_dates)
-    if n < 3:
-        return 0
-
-
-    collisions = 0
-    # A 4-day window means: date_k - date_i <= 3 days (e.g. Mon to Thu is 3 days diff)
-    for i in range(n - 2):
-        if (heavy_dates[i + 2] - heavy_dates[i]).days <= 3:
-            collisions += 1
-
-    return collisions
 
 
 def calculate_weekly_heatmap(events: list[dict]) -> list[dict]:
     if not events:
         return []
-
+    collision_by_week = collisions_per_week(find_collisions([deadline_from_event(e) for e in events]))
     weeks_events = defaultdict(list)
     for event in events:
         start_dt = datetime.fromisoformat(event["start"])
@@ -81,15 +63,13 @@ def calculate_weekly_heatmap(events: list[dict]) -> list[dict]:
 
         level = get_score_level(total_score)
         is_final_boss = total_score >= 12.0
-
-        collisions = count_collisions(week_items)
-
+        
         results.append({
             "week_start": week_key,
             "score": total_score,
             "level": level,
             "is_final_boss_week": is_final_boss,
-            "collision_count": collisions,
+            "collision_count": collision_by_week.get(week_key, 0),
             "event_count": len(week_items),
         })
 
