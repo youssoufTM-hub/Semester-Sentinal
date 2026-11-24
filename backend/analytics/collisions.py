@@ -1,18 +1,13 @@
-from dataclasses import dataclass
 from datetime import date, timedelta
+from pydantic import BaseModel
+from .models import Deadline
 
-try:
-    from .models import Deadline
-except ImportError:
-    from analytics.models import Deadline
-
+HEAVY_WEIGHT = 20
 WINDOW_DAYS = 4
 MIN_HEAVY = 3
-HEAVY_WEIGHT = 20
 
 
-@dataclass(frozen=True)
-class Collision:
+class Collision(BaseModel):
     start: date
     end: date
     count: int
@@ -26,8 +21,7 @@ def find_collisions(deadlines: list[Deadline]) -> list[Collision]:
     heavy = sorted((d for d in deadlines if is_heavy(d)), key=lambda d: d.due)
     span = timedelta(days=WINDOW_DAYS - 1)
 
-    # (first_index, last_index)
-    windows = []  
+    windows = []
     j = 0
     for i in range(len(heavy)):
         j = max(j, i)
@@ -36,7 +30,6 @@ def find_collisions(deadlines: list[Deadline]) -> list[Collision]:
         if j - i + 1 >= MIN_HEAVY:
             windows.append((i, j))
 
-    #merges windows that share items into one collision.
     merged = []
     for first, last in windows:
         if merged and first <= merged[-1][1]:
@@ -51,7 +44,6 @@ def find_collisions(deadlines: list[Deadline]) -> list[Collision]:
 
 
 def collisions_per_week(collisions: list[Collision]) -> dict[str, int]:
-    #maps a week's Monday to the number of collisions starting in it.
     counts: dict[str, int] = {}
     for c in collisions:
         monday = (c.start - timedelta(days=c.start.weekday())).isoformat()
