@@ -1,0 +1,11 @@
+{
+  "file_contains": "CSCI 1062U",
+  "course_code": "CSCI 1062U",
+  "notes": "Word file. Midterms are in the 'important dates' table at the end; lectures Mon/Wed 11:10-12:30. Weekly labs and semi-weekly quizzes start week 2 but have no listed dates, so they are not scored here.",
+  "items": [
+    {"title": "Diagnostic test", "kind": ["quiz", "exam", "assignment"], "due_date": "2026-09-11", "match": "diagnostic"},
+    {"title": "Midterm 1", "kind": ["exam"], "due_date": "2026-10-05", "match": "mid.?term"},
+    {"title": "Midterm 2", "kind": ["exam"], "due_date": "2026-11-16", "match": "mid.?term"},
+    {"title": "Final Exam", "kind": ["exam"], "due_date": null, "match": "final"}
+  ]
+}

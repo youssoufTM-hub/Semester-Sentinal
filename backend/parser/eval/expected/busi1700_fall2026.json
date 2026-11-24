@@ -1,0 +1,28 @@
+{
+  "file_contains": "BUSI1700",
+  "course_code": "BUSI1700",
+  "notes": "Hand-checked against the Fall 2026 outline. The outline says the midterm is Sat Oct 24 in one place and Sat Oct 31 in two others (incl. 'firmly scheduled'); Oct 31 is expected and a warning about the conflict is expected.",
+  "expect_warning_about": ["midterm"],
+  "items": [
+    {"title": "Pretest #1", "kind": ["quiz"], "due_date": "2026-09-22", "match": "pre.?test"},
+    {"title": "Pretest #2", "kind": ["quiz"], "due_date": "2026-09-29", "match": "pre.?test"},
+    {"title": "Pretest #3", "kind": ["quiz"], "due_date": "2026-10-06", "match": "pre.?test"},
+    {"title": "Pretest #4", "kind": ["quiz"], "due_date": "2026-10-20", "match": "pre.?test"},
+    {"title": "Pretest #5", "kind": ["quiz"], "due_date": "2026-11-03", "match": "pre.?test"},
+    {"title": "Pretest #6", "kind": ["quiz"], "due_date": "2026-11-10", "match": "pre.?test"},
+    {"title": "Pretest #7", "kind": ["quiz"], "due_date": "2026-11-17", "match": "pre.?test"},
+    {"title": "Pretest #8", "kind": ["quiz"], "due_date": "2026-11-24", "match": "pre.?test"},
+    {"title": "Pretest #9", "kind": ["quiz"], "due_date": "2026-11-24", "match": "pre.?test"},
+    {"title": "ICE #1", "kind": ["quiz", "assignment"], "due_date": "2026-09-16", "match": "\bice\b|in.?class"},
+    {"title": "ICE #2", "kind": ["quiz", "assignment"], "due_date": "2026-09-23", "match": "\bice\b|in.?class"},
+    {"title": "ICE #3", "kind": ["quiz", "assignment"], "due_date": "2026-09-30", "match": "\bice\b|in.?class"},
+    {"title": "ICE #4", "kind": ["quiz", "assignment"], "due_date": "2026-10-07", "match": "\bice\b|in.?class"},
+    {"title": "ICE #5", "kind": ["quiz", "assignment"], "due_date": "2026-10-21", "match": "\bice\b|in.?class"},
+    {"title": "ICE #6", "kind": ["quiz", "assignment"], "due_date": "2026-11-04", "match": "\bice\b|in.?class"},
+    {"title": "ICE #7", "kind": ["quiz", "assignment"], "due_date": "2026-11-11", "match": "\bice\b|in.?class"},
+    {"title": "ICE #8", "kind": ["quiz", "assignment"], "due_date": "2026-11-18", "match": "\bice\b|in.?class"},
+    {"title": "ICE #9", "kind": ["quiz", "assignment"], "due_date": "2026-11-25", "match": "\bice\b|in.?class"},
+    {"title": "Midterm Exam", "kind": ["exam"], "due_date": "2026-10-31", "match": "mid.?term"},
+    {"title": "Final Exam", "kind": ["exam"], "due_date": null, "match": "final"}
+  ]
+}

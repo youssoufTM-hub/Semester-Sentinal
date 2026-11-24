@@ -1,0 +1,190 @@
+{
+  "course": {
+    "code": "PHY 1030U",
+    "name": "Introductory Physics",
+    "term": "Fall 2026",
+    "instructor": "Dr. Rupinder Brar, Dr. Mohamed Musa",
+    "term_start": "2026-09-08",
+    "term_end": "2026-12-19"
+  },
+  "deadlines": [
+    {
+      "title": "Test 1",
+      "kind": "exam",
+      "raw_label": "Tests",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 5.0,
+      "estimated_hours": 6.0,
+      "date_source": "There will be four small tests, in the synchronous lectures",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Four tests total worth 20%. Exact dates are not listed in the syllabus and will be held during synchronous lectures."
+    },
+    {
+      "title": "Test 2",
+      "kind": "exam",
+      "raw_label": "Tests",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 5.0,
+      "estimated_hours": 6.0,
+      "date_source": "There will be four small tests, in the synchronous lectures",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Four tests total worth 20%. Exact dates are not listed in the syllabus and will be held during synchronous lectures."
+    },
+    {
+      "title": "Test 3",
+      "kind": "exam",
+      "raw_label": "Tests",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 5.0,
+      "estimated_hours": 6.0,
+      "date_source": "There will be four small tests, in the synchronous lectures",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Four tests total worth 20%. Exact dates are not listed in the syllabus and will be held during synchronous lectures."
+    },
+    {
+      "title": "Test 4",
+      "kind": "exam",
+      "raw_label": "Tests",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 5.0,
+      "estimated_hours": 6.0,
+      "date_source": "There will be four small tests, in the synchronous lectures",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Four tests total worth 20%. Exact dates are not listed in the syllabus and will be held during synchronous lectures."
+    },
+    {
+      "title": "Final Exam",
+      "kind": "exam",
+      "raw_label": "Final Exam",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 30.0,
+      "estimated_hours": 20.0,
+      "date_source": "Final Exam Period December 10 to 19",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Scheduled during the final exam period (December 10-19). Exact date/time published on official exam schedule."
+    },
+    {
+      "title": "Physics Mastery Modules",
+      "kind": "assignment",
+      "raw_label": "Physics Mastery Modules",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 10.0,
+      "estimated_hours": 15.0,
+      "date_source": "online modules (called 'Physics Mastery Modules' or just called 'LON-CAPA')",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Completed online via LON-CAPA throughout the term; specific module due dates are posted on Canvas."
+    },
+    {
+      "title": "Laboratory Component",
+      "kind": "assignment",
+      "raw_label": "Laboratory",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 20.0,
+      "estimated_hours": 25.0,
+      "date_source": "one lab every second week, as determined by your individual schedules starting no earlier than September 14",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "Biweekly labs starting week of Sept 14. Dates depend on individual student lab section schedule."
+    },
+    {
+      "title": "Tutorial Work",
+      "kind": "assignment",
+      "raw_label": "Tutorial Work",
+      "due_date": null,
+      "due_time": null,
+      "end_time": null,
+      "weight_pct": 7.5,
+      "estimated_hours": 10.0,
+      "date_source": "five 80-minute sessions every second week determined by your individual schedules but beginning no earlier than September 21st",
+      "confidence": "low",
+      "needs_review": true,
+      "note": "5 tutorial sessions biweekly starting week of Sept 21. Specific meeting dates depend on individual section schedule."
+    }
+  ],
+  "meetings": [
+    {
+      "kind": "lecture",
+      "day": "tuesday",
+      "start_time": "17:10",
+      "end_time": "18:30",
+      "location": "SIR2060",
+      "section": "1"
+    },
+    {
+      "kind": "lecture",
+      "day": "thursday",
+      "start_time": "17:10",
+      "end_time": "18:30",
+      "location": "SIR2060",
+      "section": "1"
+    },
+    {
+      "kind": "lecture",
+      "day": "tuesday",
+      "start_time": "18:40",
+      "end_time": "20:00",
+      "location": "SCI1350",
+      "section": "2"
+    },
+    {
+      "kind": "lecture",
+      "day": "thursday",
+      "start_time": "18:40",
+      "end_time": "20:00",
+      "location": "SCI1350",
+      "section": "2"
+    }
+  ],
+  "grading_scheme": [
+    {
+      "name": "Laboratory",
+      "weight_pct": 20.0
+    },
+    {
+      "name": "Physics Mastery Modules",
+      "weight_pct": 10.0
+    },
+    {
+      "name": "Tutorial Work",
+      "weight_pct": 7.5
+    },
+    {
+      "name": "Active Learning Participation",
+      "weight_pct": 12.5
+    },
+    {
+      "name": "Tests",
+      "weight_pct": 20.0
+    },
+    {
+      "name": "Final Exam",
+      "weight_pct": 30.0
+    }
+  ],
+  "warnings": [
+    "Dates for the 4 in-class tests are not listed in the syllabus; check Canvas for announcements.",
+    "Final exam date/time is determined by the university registrar during the exam period (December 10 to 19).",
+    "Individual schedules for biweekly Laboratories (starting Sept 14) and Tutorials (5 sessions starting Sept 21) are determined separately on Canvas.",
+    "Must obtain at least 50% overall AND at least 50% on the total lab mark to pass the course."
+  ]
+}

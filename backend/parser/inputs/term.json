@@ -1,0 +1,8 @@
+{
+  "term_name": "Fall 2026",
+  "start": "2026-09-08",
+  "end": "2026-12-19",
+  "breaks": [
+    {"name": "Fall Study Break", "start": "2026-10-12", "end": "2026-10-16"}
+  ]
+}

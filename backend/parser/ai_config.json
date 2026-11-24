@@ -1,0 +1,25 @@
+{
+  "_readme": "Copy this file to ai_config.json (same folder) and paste your key(s). ai_config.json is git-ignored. Set \"provider\" to the one you want to use; you only need a key for that one.",
+
+  "provider": "gemini",
+
+  "providers": {
+    "gemini": {
+      "api_key": "",
+      "model": "gemini-3.5-flash",
+      "fallback_models": ["gemini-3.5-flash-lite"],
+      "_get_key": "https://aistudio.google.com/apikey"
+    },
+    "claude": {
+      "api_key": "",
+      "model": "claude-opus-5-5",
+      "_get_key": "https://platform.claude.com/settings/keys"
+    },
+    "openai": {
+      "api_key": "",
+      "model": "gpt-5-mini",
+      "base_url": "",
+      "_base_url_examples": "leave blank for OpenAI; https://openrouter.ai/api/v1 for OpenRouter (one key, many models); http://localhost:11434/v1 for Ollama (no key)"
+    }
+  }
+}
