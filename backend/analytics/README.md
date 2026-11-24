@@ -1,83 +1,68 @@
 # Analytics (`backend/analytics/`)
 
-This package turns syllabus deadlines into weekly workload scores, identifies
-clusters of major deadlines, and exports deadlines as an iCalendar (`.ics`)
-file. It is the analytics layer for Semester Sentinel; it does not parse
-syllabus files or expose an HTTP endpoint.
+The analytics package turns deadline event dictionaries into weekly workload
+scores, detects clusters of major deadlines, and exports deadlines as an
+iCalendar (`.ics`) file. It does not parse syllabus files or expose an HTTP
+endpoint.
 
-## Flow
+## Weekly heatmap
 
-```text
-Deadline records
-    ├── scoring.score_weeks()       → weekly scores and risk levels
-    ├── collisions.find_collisions() → major-deadline collision windows
-    └── ics_export.build_ics()      → downloadable calendar data
+`calculate_weekly_heatmap(events)` groups events by the Monday of their due
+week. Each event must include `start`, an ISO date or datetime string.
+`type`, `weight_pct`, `course`, and `title` are optional.
+
+```python
+from analytics.calculate_weekly_heatmap import calculate_weekly_heatmap
+
+events = [
+    {"course": "PHYS", "title": "Midterm", "start": "2026-11-12",
+     "type": "exam", "weight_pct": 30},
+    {"course": "CS", "title": "Project", "start": "2026-11-13",
+     "type": "project", "weight_pct": 25},
+    {"course": "MATH", "title": "Assignment", "start": "2026-11-10",
+     "type": "assignment", "weight_pct": 5},
+]
+
+print(calculate_weekly_heatmap(events))
 ```
 
-## Deadline data
+Each result contains `week_start` (Monday as `YYYY-MM-DD`), `score`, `level`,
+`is_final_boss_week`, `collision_count`, and `event_count`.
 
-Analytics functions accept `Deadline` objects from `models.py`:
+Base points by event type are:
 
-| Field | Type | Meaning |
-|---|---|---|
-| `course` | `str` | Course name or code |
-| `title` | `str` | Deadline title |
-| `kind` | `str` | `exam`, `project`, `quiz`, or `assignment` |
-| `due` | `datetime.date` | Due date |
-| `weight` | `float` | Percentage of the course grade |
-
-## Weekly workload scoring
-
-`scoring.score_weeks(deadlines)` groups deadlines by the Monday of their week.
-Each item contributes points based on its kind:
-
-| Kind | Base points |
+| Type | Points |
 |---|---:|
 | Exam | 4 |
 | Project | 3 |
 | Quiz | 1.5 |
 | Assignment | 1 |
+| Class or study | 1 |
 
-Items worth 20% or more of the course grade receive a 1.5× multiplier. Weekly
-scores map to risk levels as follows:
+Events worth 20% or more of the course grade receive a 1.5× multiplier.
+Unknown event types default to 1 point. Score levels are green below 4, yellow
+from 4 to under 8, orange from 8 to under 12, and red at 12 or more. Red weeks
+are marked as Final Boss Weeks.
 
-| Score | Level |
-|---:|---|
-| Under 4 | Green |
-| 4 to under 8 | Yellow |
-| 8 to under 12 | Orange |
-| 12 or more | Red (`is_final_boss`) |
+## Deadline models and collisions
 
-An unrecognized deadline kind raises `ValueError`.
+`analytics.models.Deadline` represents a deadline with `course`, `title`,
+`kind`, `due` (`datetime.date`), and `weight`. Use
+`deadline_from_event(event)` to convert an event dictionary into a model.
 
-## Collision detection
-
-`collisions.find_collisions(deadlines)` considers exams, projects, and any
-deadline worth at least 20% to be heavy. A collision is a four-day inclusive
-window containing at least three heavy deadlines andverlapping windows are
-merged. Each `Collision` reports its first and last due dates and the number
-of heavy deadlines in the merged window.
-
-`collisions.collisions_per_week(collisions)` counts collisions by the Monday
-of each collision's start week. Its keys are ISO date strings (`YYYY-MM-DD`).
+`collisions.find_collisions(deadlines)` considers exams, projects, and
+deadlines worth at least 20% to be heavy. A collision is a four-day inclusive
+window containing at least three heavy deadlines. Overlapping qualifying
+windows are merged. `collisions_per_week(collisions)` counts each collision
+in the week containing its start date; the heatmap reports that count in
+`collision_count`.
 
 ## Calendar export
 
 `ics_export.build_ics(deadlines)` returns calendar data as `bytes`. Each
 deadline becomes an all-day event titled `<course>: <title>`, ending the day
-after its due date as required by the iCalendar all-day event format. Event
-UIDs are deterministic for the same course, title, and due date.
-
-## Use it
-
-Run commands from the `backend/` directory:
-
-```powershell
-pip install -r requirements.txt
-python -c "from datetime import date; from analytics.models import Deadline; from analytics.scoring import score_weeks; print(score_weeks([Deadline('PHY', 'Midterm', 'exam', date(2026, 11, 12), 30)]))"
-```
-
-To create an `.ics` file from application code:
+after its due date. Event UIDs are deterministic for the same course, title,
+and due date.
 
 ```python
 from pathlib import Path
@@ -87,13 +72,15 @@ from analytics.ics_export import build_ics
 Path("deadlines.ics").write_bytes(build_ics(deadlines))
 ```
 
-## Tests
+## Setup and tests
 
-From `backend/`, run the analytics tests with:
+Run commands from the `backend/` directory:
 
 ```powershell
-pytest tests/test_scoring.py tests/test_analytics.py tests/test_collisions.py
+pip install -r requirements.txt
+python -m pytest
 ```
 
-The tests cover score calculations and thresholds, collision rules and weekly
-grouping, and calendar event generation.
+The tests cover heatmap scores and thresholds, collision rules and weekly
+grouping, and calendar event generation. For the sample-data sensitivity
+analysis, see [`backend/scripts/README.md`](../scripts/README.md).
