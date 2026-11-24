@@ -69,6 +69,8 @@ class ParseResult(BaseModel):
     meetings: list[Meeting]
     grading_scheme: list[GradeComponent]
     warnings: list[str] = Field(description="Problems the student should know about (TBA dates, conflicting info, ...)")
+    # set by the parser, not the model: the name the student gave the course
+    label: Optional[str] = None
 
 
 def _strictify(node):
@@ -105,6 +107,7 @@ def _inline_refs(node, defs):
 
 def parse_result_json_schema() -> dict:
     schema = copy.deepcopy(ParseResult.model_json_schema())
+    schema["properties"].pop("label", None)
     schema = _inline_refs(schema, schema.get("$defs", {}))
     return _strictify(schema)
 

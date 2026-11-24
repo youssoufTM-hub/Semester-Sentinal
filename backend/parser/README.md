@@ -123,7 +123,10 @@ result = SyllabusParser().parse(
 
 API: add `app.include_router(parser_router)` (from `parser.router`) in `app/main.py`.
 `POST /api/parse/syllabi` takes `files`, plus optional `course_names` (JSON list)
-and `term` (JSON). It returns `{courses, review_rows, events, errors}`.
+and `term` (JSON). It returns `{courses, review_rows, deadlines, events, analysis, errors}`.
+Until `app/main.py` exists, run `uvicorn parser.dev_server:app --reload` from `backend/`.
+
+**Connecting it to analytics, the heatmap and the frontend: see [INTEGRATION.md](INTEGRATION.md).**
 
 ## How dates are handled
 

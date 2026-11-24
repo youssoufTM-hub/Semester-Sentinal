@@ -8,6 +8,7 @@ Once app/main.py includes parser.router, this file isn't needed.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from .router import router
 
@@ -20,3 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(router)
+
+
+@app.get("/", include_in_schema=False)
+def home():
+    return RedirectResponse("/docs")

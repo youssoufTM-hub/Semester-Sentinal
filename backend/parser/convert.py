@@ -10,11 +10,13 @@ _WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
 
 
 def course_label(result: ParseResult) -> str:
-    return result.course.code or result.course.name or "Unknown course"
+    # the name typed in the frontend wins, then the code on the syllabus
+    return result.label or result.course.code or result.course.name or "Unknown course"
 
 
 def to_deadline_rows(results: Iterable[ParseResult]) -> list[dict]:
-    # undated items are skipped (analytics needs a date)
+    # Integration (analytics): every row works as analytics.models.Deadline(**row).
+    # Undated items are skipped because analytics needs a date.
     rows = []
     for result in results:
         for d in result.deadlines:
@@ -43,9 +45,13 @@ def _hhmm(value: Optional[str], default: time) -> time:
 def to_event_inputs(
     results: Iterable[ParseResult],
     term: Optional[TermContext] = None,
-    include_classes: bool = True,
+    include_classes: bool = False,
 ) -> list[dict]:
-    # timed exams use real start/end, everything else is estimated_hours before the due time
+    # Integration (heatmap): each dict matches schemas.EventInput, so
+    # calculate_weekly_heatmap(to_event_inputs(results)) works as is.
+    # The heatmap puts an event in the week of its "start" and scores it by
+    # "type", so start is the due date/time. Lectures are off by default because
+    # the heatmap would count each one as a point.
     events: list[dict] = []
     for result in results:
         course = course_label(result)
@@ -53,18 +59,16 @@ def to_event_inputs(
             due = parse_iso_date(d.due_date)
             if due is None:
                 continue
-            if d.kind == "exam" and d.due_time and d.end_time:
-                start = datetime.combine(due, _hhmm(d.due_time, time(9)))
-                end = datetime.combine(due, _hhmm(d.end_time, time(11)))
+            start = datetime.combine(due, _hhmm(d.due_time, time(23, 59)))
+            end = None
+            if d.end_time:
+                end = datetime.combine(due, _hhmm(d.end_time, time(23, 59)))
                 if end <= start:
-                    end = start + timedelta(hours=max(d.estimated_hours, 1))
-            else:
-                end = datetime.combine(due, _hhmm(d.due_time, time(23, 59)))
-                start = end - timedelta(hours=max(d.estimated_hours, 0.5))
+                    end = None
             events.append({
                 "title": f"{course}: {d.title}",
                 "start": start.isoformat(),
-                "end": end.isoformat(),
+                "end": end.isoformat() if end else None,
                 "type": d.kind,
                 "weight_pct": d.weight_pct,
             })
@@ -109,6 +113,8 @@ def _meeting_events(result: ParseResult, term: Optional[TermContext]) -> list[di
 
 
 def to_review_rows(results: Iterable[ParseResult]) -> list[dict]:
+    # Integration (frontend): returned as "review_rows" by POST /api/parse/syllabi.
+    # frontend/api.py row_to_deadline() reads course, title, kind, due_date, weight_pct.
     rows = []
     for result in results:
         for d in result.deadlines:

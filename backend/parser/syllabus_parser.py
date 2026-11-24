@@ -1,8 +1,10 @@
 """Sends a syllabus to the provider and validates the JSON it returns."""
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -16,6 +18,8 @@ from .prompts import SYSTEM_PROMPT, build_user_prompt
 from .providers import Provider, ProviderError, get_provider
 
 log = logging.getLogger(__name__)
+
+CACHE_SIZE = 50
 
 
 class ParserError(Exception):
@@ -46,6 +50,9 @@ class SyllabusParser:
         self.transient_retries = transient_retries  # 429 / 5xx
         self.backoff_seconds = backoff_seconds
         self._schema = parse_result_json_schema()
+        # same file + same term -> reuse the answer (Streamlit re-sends on every rerun)
+        self._cache: dict[str, str] = {}
+        self._cache_lock = threading.Lock()
 
     def parse(
         self,
@@ -59,10 +66,20 @@ class SyllabusParser:
             raise ParserError(str(err)) from err
 
         prompt = build_user_prompt(syllabus.course_hint, _term_block(term), extra_context)
-        result = self._ask(document, prompt)
+        key = hashlib.sha256(syllabus.data + prompt.encode("utf-8")).hexdigest()
+        with self._cache_lock:
+            cached = self._cache.get(key)
+        if cached is not None:
+            result = ParseResult.model_validate_json(cached)
+        else:
+            result = self._ask(document, prompt)
+            with self._cache_lock:
+                if len(self._cache) >= CACHE_SIZE:
+                    self._cache.pop(next(iter(self._cache)))
+                self._cache[key] = result.model_dump_json()
 
-        if syllabus.course_hint and not result.course.code and not result.course.name:
-            result.course.name = syllabus.course_hint
+        if syllabus.course_hint:
+            result.label = syllabus.course_hint.strip() or None
         return check_result(result, term)
 
     def parse_many(
@@ -123,7 +140,16 @@ def _term_block(term: Optional[TermContext]) -> Optional[str]:
 
 
 def check_result(result: ParseResult, term: Optional[TermContext] = None) -> ParseResult:
-    # only flags rows for review, doesn't change the data
+    # flags rows for review and drops exact duplicates; doesn't change the data otherwise
+    seen = set()
+    unique = []
+    for d in result.deadlines:
+        key = (d.title.strip().lower(), d.kind, d.due_date)
+        if key not in seen:
+            seen.add(key)
+            unique.append(d)
+    result.deadlines = unique
+
     start = parse_iso_date((term.start if term else None) or result.course.term_start)
     end = parse_iso_date((term.end if term else None) or result.course.term_end)
 
