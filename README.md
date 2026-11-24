@@ -112,9 +112,9 @@ Measured on REPLACE_N real syllabi from 4 courses and 3 formats.
 | REPLACE_NAME | Parser |
 | REPLACE_NAME | Backend and deployment |
 | REPLACE_NAME | Frontend |
-| REPLACE_NAME | Analytics |
+| Youssouf Tive Madi | Analytics, tests and documentation |
 
-Built for the REPLACE_CLUB_NAME project challenge, fall 2026.
+Built for the OTU Project Sprint, fall 2026.
 
 ## License
 
