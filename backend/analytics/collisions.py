@@ -3,13 +3,12 @@ from datetime import date, timedelta
 
 try:
     from .models import Deadline
-    from .scoring import HEAVY_WEIGHT
 except ImportError:
     from analytics.models import Deadline
-    from analytics.scoring import HEAVY_WEIGHT
 
 WINDOW_DAYS = 4
 MIN_HEAVY = 3
+HEAVY_WEIGHT = 20
 
 
 @dataclass(frozen=True)

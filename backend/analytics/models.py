@@ -1,20 +1,20 @@
-from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
+from pydantic import BaseModel
 
 
-@dataclass(frozen=True)
-class Deadline:
-    course: str
+class Deadline(BaseModel):
+    course: str = ""
     title: str
-    
-    kind: str     
+    type: str
     due: date
-    weight: float   
+    weight_pct: float = 0
 
-@dataclass
-class WeekScore:
-    week_start: date    
-    score: float
-    level: str          
-    is_final_boss: bool
-    items: list[Deadline]
+
+def deadline_from_event(ev: dict) -> Deadline:
+    return Deadline(
+        course=ev.get("course", ""),
+        title=ev.get("title", ""),
+        type=ev.get("type", "assignment").lower(),
+        due=datetime.fromisoformat(ev["start"]).date(),
+        weight_pct=ev.get("weight_pct") or 0,
+    )

@@ -54,7 +54,7 @@ An unrecognized deadline kind raises `ValueError`.
 
 `collisions.find_collisions(deadlines)` considers exams, projects, and any
 deadline worth at least 20% to be heavy. A collision is a four-day inclusive
-window containing at least three heavy deadlines and overlapping windows are
+window containing at least three heavy deadlines andverlapping windows are
 merged. Each `Collision` reports its first and last due dates and the number
 of heavy deadlines in the merged window.
 
