@@ -6,12 +6,12 @@ from analytics.models import deadline_from_event
 from analytics.ics_export import build_ics
 
 
-def ev(kind, day, pct=0, month=11):
+def ev(kind, day, pct: float = 0, month=11):
     return {"title": f"{kind} {day}", "start": f"2026-{month:02d}-{day:02d}",
             "type": kind, "weight_pct": pct}
 
 
-def dl(kind, day, pct=0):
+def dl(kind, day, pct: float = 0):
     return deadline_from_event(ev(kind, day, pct))
 
 

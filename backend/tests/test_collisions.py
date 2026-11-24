@@ -5,7 +5,7 @@ from analytics.collisions import Collision, collisions_per_week, find_collisions
 
 
 def deadline(title: str, kind: str, due: date, weight: float = 5) -> Deadline:
-    return Deadline("TEST", title, kind, due, weight)
+    return Deadline(course="TEST", title=title, kind=kind, due=due, weight=weight)
 
 
 def test_is_heavy_uses_kind_and_weight_contract():
@@ -68,8 +68,8 @@ def test_light_deadlines_are_excluded_from_collisions():
 
 def test_collisions_per_week_counts_by_start_monday():
     collisions = [
-        Collision(date(2026, 11, 10), date(2026, 11, 13), 3),
-        Collision(date(2026, 11, 12), date(2026, 11, 14), 3),
+        Collision(start=date(2026, 11, 10), end=date(2026, 11, 13), count=3),
+        Collision(start=date(2026, 11, 12), end=date(2026, 11, 14), count=3),
     ]
 
     assert collisions_per_week(collisions) == {"2026-11-09": 2}
