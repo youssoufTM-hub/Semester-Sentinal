@@ -1,7 +1,7 @@
 """Glue between the parser and backend/analytics.
 
-Uses the analytics package as it is (Deadline, score_weeks, find_collisions,
-build_ics). Run from backend/ so `analytics` can be imported.
+Uses the analytics package as it is (Deadline, calculate_weekly_heatmap,
+find_collisions, build_ics). Run from backend/ so `analytics` can be imported.
 """
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import math
 from datetime import timedelta
 from typing import Iterable
 
-from .convert import course_label, to_deadline_rows
+from .convert import course_label, to_deadline_rows, to_event_inputs
 from .models import ParseResult, parse_iso_date
 
 # for "when to start": how many hours a student puts into one item per day
@@ -44,7 +44,6 @@ def analyze(results: Iterable[ParseResult]) -> dict:
     """Weekly scores and collisions from analytics, plus the two things only the
     parser knows: estimated hours per week and when to start heavy-week items."""
     from analytics.collisions import collisions_per_week, find_collisions
-    from analytics.scoring import score_weeks
 
     results = list(results)
     deadlines = to_analytics_deadlines(results)
@@ -52,24 +51,26 @@ def analyze(results: Iterable[ParseResult]) -> dict:
     per_week = collisions_per_week(collisions)
 
     hours: dict[str, float] = {}
-    for _, d, due in _dated_items(results):
+    items: dict[str, list[str]] = {}
+    for course, d, due in _dated_items(results):
         monday = _monday(due).isoformat()
         hours[monday] = hours.get(monday, 0) + d.estimated_hours
+        items.setdefault(monday, []).append(f"{course}: {d.title}")
 
     weeks = []
     heavy_weeks = set()
-    for w in score_weeks(deadlines):
-        monday = w.week_start.isoformat()
-        if w.level in HEAVY_LEVELS:
+    for w in weekly_scores(results):
+        monday = w["week_start"]
+        if w["level"] in HEAVY_LEVELS:
             heavy_weeks.add(monday)
         weeks.append({
             "week_start": monday,
-            "score": w.score,
-            "level": w.level,
-            "is_final_boss": w.is_final_boss,
+            "score": w["score"],
+            "level": w["level"],
+            "is_final_boss": w["is_final_boss"],
             "collisions": per_week.get(monday, 0),
             "estimated_hours": round(hours.get(monday, 0), 1),
-            "items": [f"{d.course}: {d.title}" for d in w.items],
+            "items": items.get(monday, []),
         })
 
     return {
@@ -80,6 +81,30 @@ def analyze(results: Iterable[ParseResult]) -> dict:
         ],
         "suggested_starts": suggested_starts(results, heavy_weeks),
     }
+
+
+def weekly_scores(results: Iterable[ParseResult]) -> list[dict]:
+    """One {week_start, score, level, is_final_boss} per week with deadlines.
+
+    Analytics scores weeks with calculate_weekly_heatmap(); older versions of the
+    package had analytics.scoring.score_weeks() instead, so both are supported."""
+    results = list(results)
+    try:
+        from analytics.calculate_weekly_heatmap import calculate_weekly_heatmap
+    except ImportError:
+        from analytics.scoring import score_weeks
+
+        return [
+            {"week_start": w.week_start.isoformat(), "score": w.score,
+             "level": w.level, "is_final_boss": w.is_final_boss}
+            for w in score_weeks(to_analytics_deadlines(results))
+            if w.items
+        ]
+    return [
+        {"week_start": w["week_start"], "score": w["score"],
+         "level": w["level"], "is_final_boss": w["is_final_boss_week"]}
+        for w in calculate_weekly_heatmap(to_event_inputs(results))
+    ]
 
 
 def suggested_starts(results: Iterable[ParseResult], heavy_weeks: set[str]) -> list[dict]:

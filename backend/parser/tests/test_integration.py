@@ -3,13 +3,13 @@
 No API key needed: it uses a saved parse result (tests/fixtures/sample_result.json).
 Each test skips if that part of the project isn't merged into this branch yet:
   analytics -> backend/analytics/
-  heatmap   -> calculate_weekly_heatmap.py and schemas.py at the repo root
+  heatmap   -> backend/analytics/calculate_weekly_heatmap.py (or the old copy at the repo root)
   frontend  -> frontend/api.py
 """
 import importlib
 import json
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -82,13 +82,14 @@ def test_analytics(result):
     need("analytics.models")
     from analytics.collisions import find_collisions
     from analytics.ics_export import build_ics
-    from analytics.scoring import score_weeks
+    from parser.integration import weekly_scores
 
     deadlines = to_analytics_deadlines([result])
     assert len(deadlines) == 3
     assert all(isinstance(d.due, date) for d in deadlines)
-    weeks = score_weeks(deadlines)
-    assert sum(len(w.items) for w in weeks) == 3
+    weeks = weekly_scores([result])
+    mondays = {(d.due - timedelta(days=d.due.weekday())).isoformat() for d in deadlines}
+    assert {w["week_start"] for w in weeks} == mondays
     find_collisions(deadlines)
     assert b"BEGIN:VCALENDAR" in build_ics(deadlines)
 
@@ -102,12 +103,16 @@ def test_analytics_summary(result):
 
 
 def test_heatmap(result):
-    heatmap = need("calculate_weekly_heatmap")
-    schemas = need("schemas")
+    # the heatmap now lives in analytics; the old branch had it at the repo root
+    try:
+        heatmap = importlib.import_module("analytics.calculate_weekly_heatmap")
+    except ImportError:
+        heatmap = need("calculate_weekly_heatmap")
+        schemas = need("schemas")
+        for e in to_event_inputs([result]):
+            schemas.EventInput(**e)
 
     events = to_event_inputs([result])
-    for e in events:
-        schemas.EventInput(**e)
     weeks = heatmap.calculate_weekly_heatmap(events)
     # same items in the same weeks as analytics scoring
     assert sum(w["event_count"] for w in weeks) == len(events) == 3

@@ -138,8 +138,9 @@ All of them import from `parser` and work when run from `backend/`.
 
 - `deadlines` in the response, or `to_analytics_deadlines(results)` in Python, give
   `Deadline` objects directly.
-- `analyze(results)` runs `score_weeks`, `find_collisions` and `collisions_per_week` on the
-  parser output, and adds hours per week and start dates.
+- `analyze(results)` runs `calculate_weekly_heatmap`, `find_collisions` and
+  `collisions_per_week` on the parser output, and adds hours per week and start dates.
+  (Older copies of analytics with `scoring.score_weeks` still work.)
 - `to_ics(results)` runs `build_ics` on the parser output.
 
 ### Heatmap
@@ -166,8 +167,11 @@ parser against them.
 
 ### Analytics: no problems
 
-- 3 of 3 analytics tests in `tests/test_integration.py` pass: `Deadline`, `score_weeks`,
-  `find_collisions` and `build_ics` all accept the parser output.
+- 3 of 3 analytics tests in `tests/test_integration.py` pass: `Deadline`,
+  `calculate_weekly_heatmap`, `find_collisions` and `build_ics` all accept the parser output.
+- When `scoring.py` was removed from analytics (weekly scores moved to
+  `calculate_weekly_heatmap.py`), `POST /api/parse/syllabi` returned 500 until the parser
+  switched to the new function.
 - The analytics branch's own 13 tests still pass with the parser in the same folder.
 
 ### Heatmap: 2 problems
