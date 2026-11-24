@@ -16,3 +16,4 @@
   { "course": "CSCI1062", "title": "Final project", "kind": "project", "due": "2026-12-04", "weight": 30 },
   { "course": "BUSI1700", "title": "Final exam", "kind": "exam", "due": "2026-12-09", "weight": 35 }
 ]
+

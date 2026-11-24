@@ -9,6 +9,7 @@ To keep data between two clicks, we store it in st.session_state.
 import json
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 import pandas as pd
 import streamlit as st
@@ -65,8 +66,8 @@ tab_upload, tab_review, tab_dash, tab_export = st.tabs(["1. Upload", "2. Review"
 # ---------- Tab 1: Upload ----------
 
 with tab_upload:
-    st.subheader("Upload your syllabi")
-    files = st.file_uploader("3 to 6 syllabi (PDF, .docx or .txt)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
+    st.subheader("Upload your syllabus")
+    files = st.file_uploader("3 to 6 syllabus (PDF, .docx or .txt)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
     term_start = st.date_input("Term start date", value=date(2026, 9, 8))
 
     # One "course name" field per file
@@ -79,11 +80,11 @@ with tab_upload:
     if len(files) > 0 and not good_count:
         st.warning(str(len(files)) + " file(s): you need between 3 and 6.")
 
-    if st.button("Analyze syllabi", disabled=not good_count):
-        with st.spinner("Reading the syllabi… (can take 1 to 2 minutes)"):
+    if st.button("Analyze syllabus", disabled=not good_count):
+        with st.spinner("Reading the syllabus… (can take 1 to 2 minutes)"):
             try:
                 rows, errors = api.parse_syllabi(files, names, term_start)
-                set_deadlines(rows, "syllabi")
+                set_deadlines(rows, "syllabus")
                 st.success(str(len(rows)) + " deadlines found. Check them on the Review tab.")
                 for e in errors:
                     st.warning(str(e.get("file")) + ": " + str(e.get("error")))
@@ -128,7 +129,7 @@ with tab_dash:
     weeks = logic.weekly_scores(deadlines)
 
     if len(weeks) == 0:
-        st.info("No data yet. Click \"Load demo\" or upload your syllabi.")
+        st.info("No data yet. Click \"Load demo\" or upload your syllabus.")
     else:
         collisions = logic.find_collisions(deadlines)
 
@@ -173,7 +174,7 @@ with tab_dash:
             })
         st.dataframe(pd.DataFrame(week_rows), hide_index=True, width="stretch")
         st.caption("Points: exam 4 · project 3 · quiz 1.5 · assignment 1 · ×1.5 if weight ≥ 20%. "
-                   "Green < 4 · Yellow 4 to 7.9 · Orange 8 to 11.9 · Red ≥ 12.")
+                "Green < 4 · Yellow 4 to 7.9 · Orange 8 to 11.9 · Red ≥ 12.")
 
         # Chart
         chart = pd.DataFrame(week_rows).set_index("Week of")["Score"]
@@ -214,3 +215,88 @@ with tab_export:
             type="primary",
         )
         st.caption("Open the file with Google Calendar, Outlook or Apple Calendar.")
+
+
+# ---------- Footer: Ontario Tech banner ----------
+# Drawn in HTML/CSS (no image), so it stays sharp at any size.
+# position: fixed + bottom: 0 keeps the bar stuck to the bottom of the window, full width.
+# The main container gets extra space at the bottom so the bar never hides the content.
+# Careful: no blank lines (even lines with only spaces) inside the CSS, or st.markdown breaks it.
+
+FOOTER_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@600;700&display=swap');
+[data-testid="stMainBlockContainer"] { padding-bottom: 96px; }
+.ot-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  height: 64px;
+  overflow: hidden;
+  background: #0077CA;
+  border-top: 4px solid #003C71;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+.ot-ring {
+  position: absolute;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.ot-ring-dark { width: 300px; height: 300px; left: 40%; bottom: 0; border: 34px solid #003C71; }
+.ot-ring-light { width: 300px; height: 300px; left: calc(40% + 190px); bottom: -30px; border: 34px solid #0062AE; }
+.ot-brand { position: relative; font-family: 'Figtree', 'Segoe UI', Arial, sans-serif; color: #FFFFFF; line-height: 1; }
+.ot-name { font-weight: 700; font-size: 24px; letter-spacing: -0.01em; }
+.ot-name span { color: #F26B21; }
+.ot-uni { font-weight: 600; font-size: 9.5px; letter-spacing: 0.2em; margin-top: 3px; }
+@media (max-width: 600px) {
+  .ot-footer { height: 52px; padding: 0 16px; }
+  .ot-name { font-size: 20px; }
+  .ot-uni { font-size: 8px; }
+  .ot-ring-dark { left: 55%; }
+  .ot-ring-light { display: none; }
+}
+</style>
+"""
+
+FOOTER_HTML = (
+    '<div class="ot-footer">'
+    '<div class="ot-ring ot-ring-light"></div>'
+    '<div class="ot-ring ot-ring-dark"></div>'
+    '<div class="ot-brand"><div class="ot-name">Ontario<span>Tech</span></div><div class="ot-uni">UNIVERSITY</div></div>'
+    '</div>'
+)
+
+st.markdown(FOOTER_CSS + FOOTER_HTML, unsafe_allow_html=True)
+
+
+# ---------- Background: blurred Ontario Tech logo ----------
+# The logo is drawn in SVG (dark blue shield, light blue arc, orange corner).
+# feGaussianBlur blurs it, opacity makes it faint, and it is set as the page background.
+# To change it: stdDeviation = how blurry, opacity = how visible.
+
+LOGO_SVG = (
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 670 880'>"
+    "<filter id='blur' x='-10%' y='-10%' width='120%' height='120%'><feGaussianBlur stdDeviation='6'/></filter>"
+    "<g filter='url(#blur)' opacity='0.5'>"
+    "<path d='M90 358 H125 A333 333 0 0 1 458 691 V760' fill='none' stroke='#1E90E8' stroke-width='80'/>"
+    "<path d='M388 162 H87 V553 A248 248 0 0 0 583 553 V355' fill='none' stroke='#0F5BB5' stroke-width='78'/>"
+    "<path d='M465 125 H622 V280 H545 V200 H465 Z' fill='#F26B21'/>"
+    "</g>"
+    "</svg>"
+)
+
+BACKGROUND_CSS = (
+    "<style>.stApp {"
+    " background-image: url(\"data:image/svg+xml," + quote(LOGO_SVG) + "\") !important;"
+    " background-repeat: no-repeat !important;"
+    " background-position: center 45% !important;"
+    " background-size: min(55vh, 85vw) auto !important;"
+    " background-attachment: fixed !important;"
+    "}</style>"
+)
+
+st.markdown(BACKGROUND_CSS, unsafe_allow_html=True)
